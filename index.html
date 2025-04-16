@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zoomable Image</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+    }
+    .container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      cursor: grab;
+    }
+    .zoom-img {
+      transform-origin: center center;
+      transition: transform 0.1s ease;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <img id="image" class="zoom-img" src="D:\Developing Shit\VSCode\2025-04-13_19.03.13.png" alt="Zoomable Map">
+  </div>
+
+  <script>
+    const container = document.getElementById("container");
+    const image = document.getElementById("image");
+    let scale = 1;
+    const zoomSpeed = 0.1;
+    let isPanning = false;
+    let startX, startY, translateX = 0, translateY = 0;
+
+    // Zoom functionality
+    container.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 1 : -1;
+      scale += delta * zoomSpeed;
+      scale = Math.min(Math.max(0.1, scale), 10);
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+
+    // Drag/Pan functionality
+    container.addEventListener("mousedown", function (e) {
+      isPanning = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      container.style.cursor = "grabbing";
+    });
+
+    container.addEventListener("mouseup", function () {
+      isPanning = false;
+      container.style.cursor = "grab";
+    });
+
+    container.addEventListener("mousemove", function (e) {
+      if (!isPanning) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+  </script>
+</body>
+</html>
